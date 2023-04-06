@@ -144,8 +144,12 @@ const defaultProps = {
 class Button extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            buttonPressed: false, // state for checking if the button press function is triggered 
+        }
 
         this.renderContent = this.renderContent.bind(this);
+        this.handleButtonPress = this.handleButtonPress.bind(this);
     }
 
     componentDidMount() {
@@ -161,7 +165,11 @@ class Button extends Component {
                 return;
             }
             e.preventDefault();
-            this.props.onPress();
+            this.handleButtonPress();
+            this.setState({
+                buttonPressed: true,
+            })
+            
         }, shortcutConfig.descriptionKey, shortcutConfig.modifiers, true, false, this.props.enterKeyEventListenerPriority, false);
     }
 
@@ -171,6 +179,15 @@ class Button extends Component {
             return;
         }
         this.unsubscribe();
+    }
+
+    handleButtonPress () {
+        if (this.state.buttonPressed) return; // Returning if the button is already presses once and the onPress function is ongoaing
+
+        this.props.onPress();
+        this.setState({
+            buttonPressed: false, // Resetting the state after the onPress function is executed
+        })
     }
 
     renderContent() {
